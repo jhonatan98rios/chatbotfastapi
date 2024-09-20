@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class WhatsAppMessage(BaseModel):
+class WhatsappMessage(BaseModel):
     # Refatorar de acordo com o retorno do Twilio
     SmsMessageSid: str
     NumMedia: str

@@ -1,27 +1,37 @@
 ## TODO
 
 ### Enities
-- message:
+- Context:
   - id: str
+  - phone_number: str
+  - created_at: str
+  - messages: Message[]
+
+- Message:
+  - id: str
+  - author: str
   - body: str
 
-- chat_completion:
+- ChatCompletion:
   - model: str
   - messages: str[]
 
-- content:
+- Content:
   - id: str
   - answer: str
-  - context: str
-  - service_order:
-    - product: str
-    - quantity: str
-  - followup: int
-  - check_status:
-    - id: str 
-    - successMessage: str 
-    - errorMessage: str
+  - summary: str
+  - service_order: ServiceOrder
+  - follow_up: int
+  - check_status: CheckStatus
 
+- ServiceOrder:
+  - product: str
+  - quantity: str
+
+- CheckStatus:
+  - id: str
+  - success_message: str
+  - error_message: str
 
 ### Controllers
 - chat_controller

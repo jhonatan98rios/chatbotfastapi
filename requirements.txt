@@ -1,5 +1,8 @@
+bson
 fastapi
 uvicorn
 pydantic
 asyncpg
 sqlalchemy
+psycopg2 
+motor
