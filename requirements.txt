@@ -4,5 +4,6 @@ uvicorn
 pydantic
 asyncpg
 sqlalchemy
-psycopg2 
+psycopg2
+python-dotenv 
 motor

@@ -24,8 +24,10 @@ class ChatService:
             context = Context.create(phone_number, body)
             await self.__repository.create_context(context)
 
+        return context
         # Enviar requisição para a API da Open AI com as instruções, a mensagem e o contexto.
         # Receber o resultado da Open AI
+        # Editar o contexto com as novas mensagens
         # Tratar as estruturas e executar as lógicas necessárias
 
         # Responder ao usuário

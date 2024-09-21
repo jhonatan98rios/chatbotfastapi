@@ -14,20 +14,11 @@ class MongoDBRepository(AbstractRepository):
         context.id = result.inserted_id
         return context
     
-    async def get_context(self, context_id: str) -> Optional[Context]:
-        context_data = await self.collection.find_one({"_id": ObjectId(context_id)})
-        if context_data:
-            return Context(**context_data)
-        
     async def get_context_by_phone_number(self, phone_number: str) -> Optional[Context]:
         context_data = await self.collection.find_one({"phone_number": phone_number})
         if context_data:
-            return Context(**context_data)
+            return context_data
 
-    async def list_contexts(self) -> List[Context]:
-        contexts_cursor = self.collection.find({})
-        contexts = await contexts_cursor.to_list(length=100)
-        return [Context(**context) for context in contexts]
     
     async def update_context(self, context_id: str, context: Context) -> Optional[Context]:
         await self.collection.update_one({"_id": ObjectId(context_id)}, {"$set": context.dict(exclude={"id"}, by_alias=True)})
