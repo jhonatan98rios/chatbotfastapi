@@ -1,6 +1,7 @@
 import os
 from typing import Optional
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
+from pymongo import MongoClient
+from pymongo.collection import Collection
 
 class MongoDBConnection:
     
@@ -13,7 +14,7 @@ class MongoDBConnection:
     
     def __init__(self):
         if hasattr(self, 'initialized'):
-            return  # Ensure initialization only happens once
+            return
         
         db_url = os.getenv("CONNECTION_STRING")
         db_name = os.getenv("DB_NAME")
@@ -24,12 +25,12 @@ class MongoDBConnection:
         self.db_url = db_url
         self.db_name = db_name
         
-        self.client = AsyncIOMotorClient(self.db_url)
+        self.client = MongoClient(self.db_url)
         self.db = self.client[self.db_name]
         self.initialized = True
         
-    async def get_collection(self) -> AsyncIOMotorCollection:
-        return self.db["contexts"] # type: ignore
+    def get_collection(self) -> Collection:
+        return self.db["contexts"]  # type: ignore
     
     def close(self):
         if self.client is not None:

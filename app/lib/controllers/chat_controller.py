@@ -6,26 +6,26 @@ from app.lib.providers.message_provider.twilio_message_provider import TwilioMes
 from app.lib.repository.mongodb_repository import MongoDBRepository
 from app.lib.services.chat_service import ChatService
 from app.lib.providers.completion_provider.open_ai_completion_provider import OpenAiCompletionProvider
-from motor.motor_asyncio import AsyncIOMotorCollection
+from pymongo.collection import Collection
 
 router = APIRouter()
 
-async def get_mongo_connection() -> AsyncIOMotorCollection:
+def get_mongo_connection() -> Collection:
     db_connection = MongoDBConnection()
-    return await db_connection.get_collection()
+    return db_connection.get_collection()
 
 
 @router.get("/health", status_code=status.HTTP_200_OK)
-async def health():
+def health():
     try:
-        await get_mongo_connection()
+        get_mongo_connection()
     except Exception as ex:
-        return {"status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": ex}
+        return {"status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": str(ex)}
     return {"status": 200}
 
 
 @router.post("/webhook")
-async def chat(message: WhatsappMessage, collection: AsyncIOMotorCollection = Depends(get_mongo_connection)):
+def chat(message: WhatsappMessage, collection: Collection = Depends(get_mongo_connection)):
     
     if message.Body is None:
         raise HTTPException(status_code=400, detail="Empty message")
@@ -45,7 +45,7 @@ async def chat(message: WhatsappMessage, collection: AsyncIOMotorCollection = De
     )
     
     try:
-        response = await chat_service.execute(message.From, message.Body)
+        response = chat_service.execute(message.From, message.Body)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     

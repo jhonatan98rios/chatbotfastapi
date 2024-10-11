@@ -15,14 +15,14 @@ class ChatService:
         self.__completion_provider = completion_provider
         self.__message_provider = message_provider
 
-    async def execute(self, phone_number: str, body: str):
+    def execute(self, phone_number: str, body: str):
         # Verificar se existe um contexto com esse usuário
-        context = await self.__repository.get_context_by_phone_number(phone_number)
+        context = self.__repository.get_context_by_phone_number(phone_number)
 
         # Se não, criar
         if context is None:
             context = Context.create(phone_number, body)
-            await self.__repository.create_context(context)
+            self.__repository.create_context(context)
 
         return context
         # Enviar requisição para a API da Open AI com as instruções, a mensagem e o contexto.
