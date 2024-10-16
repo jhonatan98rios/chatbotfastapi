@@ -1,10 +1,11 @@
-from datetime import datetime
 from app.lib.models.context_model import Context
 from app.lib.providers.completion_provider.abstract_completion_provider import AbstractCompletionProvider
 from app.lib.providers.message_provider.abstract_message_provider import AbstractMessageProvider
 from app.lib.repository.abstract_repository import AbstractRepository
 
 class ChatService:
+    
+    __slots__ = ['__repository', '__completion_provider', '__message_provider']
 
     __repository: AbstractRepository
     __completion_provider: AbstractCompletionProvider
@@ -23,12 +24,15 @@ class ChatService:
         if context is None:
             context = Context.create(phone_number, body)
             self.__repository.create_context(context)
+            
+        # Enviar requisição para a API da Open AI com as instruções, a mensagem e o contexto. Done
+        completion = self.__completion_provider.execute(body)
+        
+        # Gravar no banco tanto a mensagem do usuário, quanto a completion
+        
 
-        return context
-        # Enviar requisição para a API da Open AI com as instruções, a mensagem e o contexto.
-        # Receber o resultado da Open AI
-        # Editar o contexto com as novas mensagens
         # Tratar as estruturas e executar as lógicas necessárias
+        return completion
 
         # Responder ao usuário
         self.__message_provider.sendMessage(id="", to="", body="")
