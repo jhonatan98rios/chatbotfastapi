@@ -6,6 +6,9 @@ from bson import ObjectId
 
 
 class MongoDBRepository(AbstractRepository):
+    
+    __slots__ = ['collection']
+    
     def __init__(self, collection: Collection):
         self.collection: Collection = collection
 
