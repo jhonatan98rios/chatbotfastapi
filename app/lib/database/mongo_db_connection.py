@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import os
 from typing import Optional
 from pymongo import MongoClient
@@ -9,8 +10,7 @@ import os
 
 class MongoDBConnection:
     
-    def __init__(self):
-        pass
+    __slots__ = ['client', 'db']
     
     def connect(self):
         db_url = os.getenv("CONNECTION_STRING")
@@ -32,3 +32,18 @@ class MongoDBConnection:
 
 # Criação de uma instância Singleton
 mongodb_connection = MongoDBConnection()
+
+
+# Definindo o ciclo de vida da aplicação com lifespan
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: inicializa a conexão com o MongoDB
+    mongodb_connection.connect()
+    print("MongoDB connected")
+    
+    # Deixe a aplicação rodar
+    yield
+
+    # Shutdown: fecha a conexão
+    mongodb_connection.close()
+    print("MongoDB connection closed")
