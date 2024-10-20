@@ -1,4 +1,5 @@
-from app.lib.models.context_model import Context
+import uuid
+from app.lib.models.context_model import Context, Message
 from app.lib.providers.completion_provider.abstract_completion_provider import AbstractCompletionProvider
 from app.lib.providers.message_provider.abstract_message_provider import AbstractMessageProvider
 from app.lib.repository.abstract_repository import AbstractRepository
@@ -22,18 +23,30 @@ class ChatService:
 
         # Se não, criar
         if context is None:
-            context = Context.create(phone_number, body)
+            context = Context.create(phone_number=phone_number, role="user", content=body)
             self.__repository.create_context(context)
+        else:
+            message = Message(
+                id=str(uuid.uuid4()), 
+                role="user", 
+                content=body
+            )
+            context.messages.append(message)
             
-        # Enviar requisição para a API da Open AI com as instruções, a mensagem e o contexto. Done
-        completion = self.__completion_provider.execute(body)
+        print(context.dict())
+        
+        # Envia requisição para a API da Open AI com as instruções, a mensagem e o histórico.
+        completion = self.__completion_provider.execute(context.messages)
+        
+        answer = Message(id=str(uuid.uuid4()), role="assistant", content=completion.answer)
+        context.messages.append(answer)
         
         # Gravar no banco tanto a mensagem do usuário, quanto a completion
-        
+        self.__repository.update_context(context_id=str(context.id), context=context)       
 
         # Tratar as estruturas e executar as lógicas necessárias
         return completion
 
         # Responder ao usuário
-        self.__message_provider.sendMessage(id="", to="", body="")
-        return body
+        # self.__message_provider.sendMessage(id="", to="", body="")
+        # return body

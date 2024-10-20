@@ -25,8 +25,8 @@ class PyObjectId(ObjectId):
 
 class Message(BaseModel):
     id: Optional[str]
-    author: str
-    body: str
+    role: str
+    content: str
 
 
 class Context(BaseModel):
@@ -36,11 +36,11 @@ class Context(BaseModel):
     messages: List[Message]
     
     @staticmethod
-    def create(phone_number: str, body: str):
+    def create(phone_number:str, role: str, content: str):
         message = Message(
             id=str(uuid.uuid4()),
-            author=phone_number,
-            body=body
+            role=role,
+            content=content
         )
 
         context = Context(

@@ -52,6 +52,7 @@ def chat(message: WhatsappMessage, collection: Collection = Depends(get_mongo_co
     try:
         response = chat_service.execute(message.From, message.Body)
     except Exception as e:
+        print(e)
         raise InternalServerErrorException(detail=str(e))
     
     return {"message_received": context_to_json_mapper(response)}
