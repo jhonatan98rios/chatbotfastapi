@@ -8,5 +8,5 @@ from app.lib.entities.completion import Completion
 class AbstractCompletionProvider(ABC):
 
     @abstractmethod
-    def execute(self, messages: List[Message]) -> Completion:
+    def execute(self, instructions: str, footer: str, messages: List[Message]) -> Completion:
         pass

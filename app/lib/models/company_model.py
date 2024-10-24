@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from bson import ObjectId
 from datetime import datetime, timezone
-
+from enum import IntEnum
 
 class PyObjectId(ObjectId):
     """To handle ObjectId conversion with Pydantic"""
@@ -20,44 +20,23 @@ class PyObjectId(ObjectId):
     @classmethod
     def __get_pydantic_json_schema__(cls, field_schema):
         field_schema.update(type="string")
-
-
-
-class Message(BaseModel):
-    id: Optional[str]
-    role: str
-    content: str
-
-
-class Context(BaseModel):
+        
+    
+class Status(IntEnum):
+    inactive = 0
+    active = 1
+    testing = 2
+    
+    
+class Company(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
-    phone_number: str
     company_phone_number: str
+    status: Status
     created_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     instructions: str
     footer: str
-    messages: List[Message]
-    
-    @staticmethod
-    def create(phone_number:str, company_phone_number: str, role: str, content: str, instructions: str, footer: str):
-        message = Message(
-            id=str(uuid.uuid4()),
-            role=role,
-            content=content
-        )
-
-        context = Context(
-            phone_number=phone_number,
-            company_phone_number=company_phone_number,
-            messages=[message],
-            instructions=instructions,
-            footer=footer
-        )
-
-        return context
 
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        
